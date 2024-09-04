@@ -19,16 +19,20 @@ public class FirstFlighter extends ApplicationAdapter {
     private SpriteBatch batch;
     private Texture spaceShipImg;
     private Texture enemyImg;
+    private Texture shootImp;
     private OrthographicCamera camera;
     private Rectangle spaceShip;
     private Array<Rectangle> enemy;
-    private long lastDropTime;
+    private Array<Rectangle> shoot;
+    private long lastEnemySpawnTime;
+    private long lastShootSpawnTime;
 
     @Override
     public void create() {
         batch = new SpriteBatch();
         spaceShipImg = new Texture(Gdx.files.internal("spaceShip.png"));
         enemyImg = new Texture(Gdx.files.internal("enemy.png"));
+        shootImp = new Texture(Gdx.files.internal("shoot.png"));
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 640);
         spaceShip = new Rectangle();
@@ -37,7 +41,9 @@ public class FirstFlighter extends ApplicationAdapter {
         spaceShip.width = 64;
         spaceShip.height = 64;
         enemy = new Array<Rectangle>();
-        spawnRaindrop();
+        shoot = new Array<Rectangle>();
+        spawnEnemy();
+        spawnShoot();
     }
 
     @Override
@@ -46,8 +52,11 @@ public class FirstFlighter extends ApplicationAdapter {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         batch.draw(spaceShipImg, spaceShip.x, spaceShip.y);
-        for(Rectangle raindrop: enemy) {
-            batch.draw(enemyImg, raindrop.x, raindrop.y);
+        for(Rectangle e: enemy) {
+            batch.draw(enemyImg, e.x, e.y);
+        }
+        for(Rectangle s: shoot) {
+            batch.draw(shootImp, s.x, s.y);
         }
         batch.end();
         if(Gdx.input.isTouched()) {
@@ -63,13 +72,25 @@ public class FirstFlighter extends ApplicationAdapter {
         if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) spaceShip.y -= 200 * Gdx.graphics.getDeltaTime();
         if(spaceShip.x < 0) spaceShip.x = 0;
         if(spaceShip.x > 800 - 64) spaceShip.x = 800 - 64;
-        if(TimeUtils.nanoTime() - lastDropTime > 1000000000) spawnRaindrop();
+        if(TimeUtils.nanoTime() - lastEnemySpawnTime > 1000000000) spawnEnemy();
+        if(TimeUtils.nanoTime() - lastShootSpawnTime > 1000000000) spawnShoot();
         for (Iterator<Rectangle> iter = enemy.iterator(); iter.hasNext(); ) {
-            Rectangle raindrop = iter.next();
-            raindrop.y -= 200 * Gdx.graphics.getDeltaTime();
-            if(raindrop.y + 64 < 0) iter.remove();
-            if(raindrop.overlaps(spaceShip)) {
+            Rectangle enemy = iter.next();
+            enemy.y -= 200 * Gdx.graphics.getDeltaTime();
+            if(enemy.y + 64 < 0) iter.remove();
+            if(enemy.overlaps(spaceShip)) {
                 iter.remove();
+            }
+        }
+        for (Iterator<Rectangle> iter = shoot.iterator(); iter.hasNext(); ) {
+            Rectangle shoot = iter.next();
+            shoot.y += 150 * Gdx.graphics.getDeltaTime();
+            for (int i = 0; i < enemy.size; i++) {
+                Rectangle e = enemy.get(i);
+                if (shoot.overlaps(e)) {
+                    iter.remove();
+                    enemy.removeIndex(i);
+                }
             }
         }
 
@@ -81,13 +102,23 @@ public class FirstFlighter extends ApplicationAdapter {
         spaceShipImg.dispose();
     }
 
-    private void spawnRaindrop() {
-        Rectangle raindrop = new Rectangle();
-        raindrop.x = MathUtils.random(0, 800-64);
-        raindrop.y = 480;
-        raindrop.width = 64;
-        raindrop.height = 64;
-        enemy.add(raindrop);
-        lastDropTime = TimeUtils.nanoTime();
+    private void spawnEnemy() {
+        Rectangle enemy = new Rectangle();
+        enemy.x = MathUtils.random(0, 800-64);
+        enemy.y = 480;
+        enemy.width = 64;
+        enemy.height = 64;
+        this.enemy.add(enemy);
+        lastEnemySpawnTime = TimeUtils.nanoTime();
+    }
+
+    private void spawnShoot() {
+        Rectangle shoot = new Rectangle();
+        shoot.x = spaceShip.x + 64/2;
+        shoot.y = spaceShip.y + 64/2;
+        shoot.width = 8;
+        shoot.height = 14;
+        this.shoot.add(shoot);
+        lastShootSpawnTime = TimeUtils.nanoTime();
     }
 }
