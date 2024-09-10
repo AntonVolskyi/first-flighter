@@ -120,6 +120,6 @@ public class FirstFlighter extends ApplicationAdapter {
         shoot.height = 14;
         this.shoot.add(shoot);
         lastShootSpawnTime = TimeUtils.nanoTime();
-        SoundsManager.playSound(SoundsPathEnum.SHOOT_SOUND, 0.5f);
+        SoundsManager.playSound(SoundsPathEnum.SHOOT_SOUND, 0.4f);
     }
 }
