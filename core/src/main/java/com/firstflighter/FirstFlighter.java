@@ -73,7 +73,7 @@ public class FirstFlighter extends ApplicationAdapter {
         if(spaceShip.x < 0) spaceShip.x = 0;
         if(spaceShip.x > 800 - 64) spaceShip.x = 800 - 64;
         if(TimeUtils.nanoTime() - lastEnemySpawnTime > 1000000000) spawnEnemy();
-        if(TimeUtils.nanoTime() - lastShootSpawnTime > 1000000000) spawnShoot();
+        if(TimeUtils.nanoTime() - lastShootSpawnTime > 400000000) spawnShoot();
         for (Iterator<Rectangle> iter = enemy.iterator(); iter.hasNext(); ) {
             Rectangle enemy = iter.next();
             enemy.y -= 200 * Gdx.graphics.getDeltaTime();
@@ -84,7 +84,7 @@ public class FirstFlighter extends ApplicationAdapter {
         }
         for (Iterator<Rectangle> iter = shoot.iterator(); iter.hasNext(); ) {
             Rectangle shoot = iter.next();
-            shoot.y += 150 * Gdx.graphics.getDeltaTime();
+            shoot.y += 500 * Gdx.graphics.getDeltaTime();
             for (int i = 0; i < enemy.size; i++) {
                 Rectangle e = enemy.get(i);
                 if (shoot.overlaps(e)) {
