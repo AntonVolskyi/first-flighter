@@ -12,6 +12,8 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.firstflighter.sounds.SoundsManager;
+import com.firstflighter.sounds.SoundsPathEnum;
 
 import java.util.Iterator;
 
@@ -30,20 +32,18 @@ public class FirstFlighter extends ApplicationAdapter {
     @Override
     public void create() {
         batch = new SpriteBatch();
-        spaceShipImg = new Texture(Gdx.files.internal("spaceShip.png"));
-        enemyImg = new Texture(Gdx.files.internal("enemy.png"));
-        shootImp = new Texture(Gdx.files.internal("shoot.png"));
+        spaceShipImg = new Texture(Gdx.files.internal("images/spaceShip.png"));
+        enemyImg = new Texture(Gdx.files.internal("images/enemy.png"));
+        shootImp = new Texture(Gdx.files.internal("images/shoot.png"));
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 640);
         spaceShip = new Rectangle();
-        spaceShip.x = 800 / 2 - 64 / 2;
-        spaceShip.y = 20;
-        spaceShip.width = 64;
-        spaceShip.height = 64;
+        spaceShip.set(800/2-64/2, 20, 64, 64);
         enemy = new Array<Rectangle>();
         shoot = new Array<Rectangle>();
         spawnEnemy();
         spawnShoot();
+        SoundsManager.playSoundLoop(SoundsPathEnum.MAIN_THEME, 0.3f);
     }
 
     @Override
@@ -120,5 +120,6 @@ public class FirstFlighter extends ApplicationAdapter {
         shoot.height = 14;
         this.shoot.add(shoot);
         lastShootSpawnTime = TimeUtils.nanoTime();
+        SoundsManager.playSound(SoundsPathEnum.SHOOT_SOUND, 0.5f);
     }
 }
