@@ -84,7 +84,7 @@ public class FirstFlighter extends ApplicationAdapter {
         }
         for (Iterator<Rectangle> iter = shoot.iterator(); iter.hasNext(); ) {
             Rectangle shoot = iter.next();
-            shoot.y += 450 * Gdx.graphics.getDeltaTime();
+            shoot.y += 500 * Gdx.graphics.getDeltaTime();
             for (int i = 0; i < enemy.size; i++) {
                 Rectangle e = enemy.get(i);
                 if (shoot.overlaps(e)) {
